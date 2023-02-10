@@ -33,5 +33,5 @@ ostream& operator<<(ostream& os, const Razlomak& r)
 
 void Razlomak::pisi(ostream& os) const
 {
-    os << brojilac << '/' << imenilac << "\n";
+    os << brojilac << '/' << imenilac;
 }
