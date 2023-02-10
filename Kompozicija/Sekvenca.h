@@ -19,7 +19,7 @@ class Sekvenca {
 		Elem(T t): pod(t), sled(nullptr) {}
 	};
 
-	Elem* posl, * prvi;
+	Elem* posl = nullptr, * prvi = nullptr;
 	int duz = 0;
 	bool moze = true;
 
@@ -34,7 +34,7 @@ public:
 	Sekvenca(Sekvenca&& s) { premesti(s); }
 	Sekvenca& operator=(const Sekvenca& s) {
 		if (this != &s) {
-			brisi(s); kopiraj(s);
+			brisi(); kopiraj(s);
 		}
 		return *this;
 	}
@@ -42,13 +42,13 @@ public:
 		if (this != &s) { brisi(); premesti(s); }
 	}
 
-	~Sekvenca() { brisi(s); }
+	~Sekvenca() { brisi(); }
 
 
-	void dodaj(T t);
+	Sekvenca& dodaj(T t);
 	T& operator[](int i);
 	const T& operator[](int i)const;
-	int duzina() const;
+	int duzina() const { return duz; }
 	T uzmi();
 
 
@@ -59,18 +59,18 @@ public:
 #endif
 
 template<typename T>
-void Sekvenca<T>::dodaj(T t) {
+Sekvenca<T>& Sekvenca<T>::dodaj(T t) {
 	if (!moze) {
 		throw GDodaj();
 	}
-	Elem novi = new Elem(t);
-	posl = (!prvi ? prvi : posl->sled) = novi;
+	posl = (!prvi ? prvi : posl->sled) = new Elem(t);
 	duz++;
+	return *this;
 }
 
 template<typename T>
 T Sekvenca<T>::uzmi() {
-	T t = prvi->t;
+	T t = prvi->pod;
 	Elem* pom = prvi;
 	prvi = prvi->sled;
 	if (!prvi) posl = prvi;
@@ -84,7 +84,7 @@ template<typename T>
 void Sekvenca<T>::kopiraj(const Sekvenca<T>& s) {
 	duz = 0; moze = true;
 	for (Elem* tek = s.prvi; tek; tek->sled) {
-		this->dodaj(tek->t);
+		this->dodaj(tek->pod);
 	}
 }
 
@@ -106,9 +106,15 @@ void Sekvenca<T>::brisi() {
 
 template<typename T>
 T& Sekvenca<T>::operator[](int i) {
-	
-	for (Elem* tek = prvi; i--; tek->sled;);
-	return tek->t;
+	if (i < 0 || i >= duz) throw GDodaj();
+	Elem* tek = prvi;
+	for (; i > 0; i--, tek = tek->sled);
+	return tek->pod;
+}
+
+template<typename T>
+const T& Sekvenca<T>::operator[](int i) const {
+	return const_cast<Sekvenca&>(*this)[i];
 }
 
 
