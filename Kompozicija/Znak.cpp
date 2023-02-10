@@ -2,7 +2,7 @@
 
 void Znak::pisi(ostream& os) const
 {
-	os << this->opis() << '(' << this->dohvTrajanje() << ") \n";
+	os << this->opis() << '(' << this->dohvTrajanje() << ')' ;
 }
 
 Razlomak operator+(const Znak& z1, const Znak& z2)
